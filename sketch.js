@@ -31,11 +31,11 @@ function updateUiScale() {
 }
 
 function updateLeftUiInset() {
-  // UI design: divider line starts at x=22, width=233px → right edge at 255px
-  // Multiply by the current scale so it always matches the visual position.
-  const UI_DESIGN_INSET = 22 + 233; // 255px in design space
-  const s = Math.min(1, windowHeight / UI_DESIGN_HEIGHT);
-  leftUiInsetPx = UI_DESIGN_INSET * s;
+  // Always use the fixed design-space width of the UI panel as the inset,
+  // regardless of how the CSS scale changes.
+  // The canvas is full windowWidth; the UI sits on top as an overlay.
+  // Using the unscaled 255px keeps the text anchor stable across all screen sizes.
+  leftUiInsetPx = 22 + 233; // 255px — fixed design inset
 }
 
 function getBalancedCenterX(canvasW) {
