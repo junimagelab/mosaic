@@ -25,9 +25,9 @@ let uiPanel;
 const UI_DESIGN_HEIGHT = 950;
 
 function updateUiScale() {
-  if (!uiPanel) return;
-  const s = Math.min(1, windowHeight / UI_DESIGN_HEIGHT);
-  uiPanel.style('transform', 'scale(' + s + ')');
+  // No transform — UI stays at its natural size.
+  // On short screens the bottom UI elements simply go off-screen,
+  // but the canvas text position stays perfectly stable.
 }
 
 function updateLeftUiInset() {
