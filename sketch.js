@@ -31,18 +31,11 @@ function updateUiScale() {
 }
 
 function updateLeftUiInset() {
-  try {
-    // Use the uiPanel bounding rect — getBoundingClientRect() already accounts
-    // for the CSS scale() transform, so this reflects the true visual right edge.
-    const el = (uiPanel && uiPanel.elt) || (textInput && textInput.elt);
-    if (!el) { leftUiInsetPx = 0; return; }
-    const r = el.getBoundingClientRect();
-    const candidate = Math.max(0, r.right);
-    // clamp so tiny windows don't overshift
-    leftUiInsetPx = Math.min(candidate, (typeof width === 'number' ? width : windowWidth) * 0.8);
-  } catch (_) {
-    leftUiInsetPx = 0;
-  }
+  // UI design: divider line starts at x=22, width=233px → right edge at 255px
+  // Multiply by the current scale so it always matches the visual position.
+  const UI_DESIGN_INSET = 22 + 233; // 255px in design space
+  const s = Math.min(1, windowHeight / UI_DESIGN_HEIGHT);
+  leftUiInsetPx = UI_DESIGN_INSET * s;
 }
 
 function getBalancedCenterX(canvasW) {
@@ -914,6 +907,7 @@ function setup() {
     uiPanel.elt.appendChild(child);
   }
   updateUiScale();
+  updateLeftUiInset();
 
   // initial mask after UI is ready
   createMask(true);
