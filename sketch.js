@@ -21,6 +21,14 @@ let currentPatternColor = '#000000';
 // Left UI (control bar) occupies part of the canvas visually.
 // We shift the text center by half of that width to keep the composition balanced.
 let leftUiInsetPx = 0;
+let uiPanel;
+const UI_DESIGN_HEIGHT = 950;
+
+function updateUiScale() {
+  if (!uiPanel) return;
+  const s = Math.min(1, windowHeight / UI_DESIGN_HEIGHT);
+  uiPanel.style('transform', 'scale(' + s + ')');
+}
 
 function updateLeftUiInset() {
   try {
@@ -377,6 +385,16 @@ function setup() {
 
   // offscreen layer that holds ALL persisted rectangles
   createPatternLayer();
+
+  // Create a wrapper for all UI elements so the layout scales on small screens
+  uiPanel = createDiv('');
+  uiPanel.id('uiPanel');
+  uiPanel.style('position', 'fixed');
+  uiPanel.style('top', '0');
+  uiPanel.style('left', '0');
+  uiPanel.style('transform-origin', 'top left');
+  uiPanel.style('z-index', '1000');
+  uiPanel.style('pointer-events', 'none');
 
   // 설명글 추가
   let descriptionText = createP('This work approaches letterforms through the logic of the grid, observing how they shift when gaps appear or individual parts take on different shapes. It experiments with recombining these fragments to question where a letter ends and a graphic begins.');
@@ -886,8 +904,19 @@ function setup() {
       border: none;
       border-radius: 20px;
     }
+
+    /* Allow clicks through the panel wrapper but keep children interactive */
+    #uiPanel * { pointer-events: auto; }
   `;
   document.head.appendChild(style);
+
+  // Move all non-canvas UI elements into the scaled panel wrapper
+  const bodyChildren = [...document.body.children];
+  for (const child of bodyChildren) {
+    if (child.tagName === 'CANVAS' || child.tagName === 'SCRIPT' || child === uiPanel.elt) continue;
+    uiPanel.elt.appendChild(child);
+  }
+  updateUiScale();
 
   // initial mask after UI is ready
   createMask(true);
@@ -957,6 +986,7 @@ function windowResized() {
   createPatternLayer();
   createMask(true);
   updateLeftUiInset();
+  updateUiScale();
   redraw();
 }
 
