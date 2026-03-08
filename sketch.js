@@ -32,18 +32,14 @@ function updateUiScale() {
 
 function updateLeftUiInset() {
   try {
-    const el = textInput && textInput.elt;
-    if (!el) {
-      leftUiInsetPx = 0;
-      return;
-    }
+    // Use the uiPanel bounding rect — getBoundingClientRect() already accounts
+    // for the CSS scale() transform, so this reflects the true visual right edge.
+    const el = (uiPanel && uiPanel.elt) || (textInput && textInput.elt);
+    if (!el) { leftUiInsetPx = 0; return; }
     const r = el.getBoundingClientRect();
-    // r.right is the right edge of the left UI in viewport pixels.
-    // Add a small gutter so the center doesn't feel too close to UI.
-    const gutter = 20;
-    const candidate = Math.max(0, r.right + gutter);
+    const candidate = Math.max(0, r.right);
     // clamp so tiny windows don't overshift
-    leftUiInsetPx = Math.min(candidate, (typeof width === 'number' ? width : windowWidth) * 0.6);
+    leftUiInsetPx = Math.min(candidate, (typeof width === 'number' ? width : windowWidth) * 0.8);
   } catch (_) {
     leftUiInsetPx = 0;
   }
@@ -52,7 +48,8 @@ function updateLeftUiInset() {
 function getBalancedCenterX(canvasW) {
   const w = typeof canvasW === 'number' ? canvasW : width;
   const inset = Number(leftUiInsetPx) || 0;
-  return w / 2 + inset / 2;
+  // Center exactly between the UI right edge and the canvas right edge
+  return inset + (w - inset) / 2;
 }
 
 let targetDensity = 1;
@@ -985,8 +982,8 @@ function windowResized() {
   maskG.pixelDensity(targetDensity);
   createPatternLayer();
   createMask(true);
-  updateLeftUiInset();
-  updateUiScale();
+  updateUiScale();       // apply scale transform first
+  updateLeftUiInset();   // then measure actual visual right edge
   redraw();
 }
 
