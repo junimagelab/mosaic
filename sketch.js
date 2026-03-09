@@ -387,7 +387,7 @@ function setup() {
   uiPanel.style('pointer-events', 'none');
 
   // 설명글 추가
-  let descriptionText = createP('This work approaches letterforms through the logic of the grid, observing how they shift when gaps appear or individual parts take on different shapes. It experiments with recombining these fragments to question where a letter ends and a graphic begins.');
+  let descriptionText = createP('This work imagines dressing letterforms, exploring how patterns such as mosaic, grid, and lines can change the mood and character of letters beyond the differences of their forms. In doing so, it proposes another way of expressing and perceiving letterforms.');
   descriptionText.position(25, 655);
   descriptionText.style('width', '233px');
   descriptionText.style('margin', '0');
@@ -404,7 +404,7 @@ function setup() {
   dividerLineDotted.style('border-top', '2px dotted #000');
   dividerLineDotted.style('z-index', '1000');
 
-    dividerLineDotted = createDiv('');
+  dividerLineDotted = createDiv('');
   dividerLineDotted.position(22, 860);
   dividerLineDotted.style('width', '233px');
   dividerLineDotted.style('border-top', '2px dotted #000');
